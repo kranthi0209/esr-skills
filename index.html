@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AP Govt Employees — Skills Capture (Updated)</title>
+  <style>
+    :root{
+      --bg:#f0f4ff; --card:#ffffff; --accent:#cf2626; --accent-light:#eee3a4; --muted:#6b7280; --success:#10b981;
+      --highlight:#3857e0; --highlight-bg:rgba(125, 191, 245, 0.767);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(135deg,#f8f7a5,#ebf1b1);
+      color:#111827;
+      margin:0;
+      padding:24px;
+    }
+    .container{max-width:1100px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{font-size:34px;margin:0;color:#1e3a8a;text-shadow:1px 1px 4px rgba(0,0,0,0.2)}
+    header p{margin:0;color:#3730a3;font-size:14px}
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.12);
+      margin-bottom:16px;
+      transition:all 0.3s ease;
+    }
+
+    details{
+      border-radius:12px;
+      margin-bottom:10px;
+      background:linear-gradient(180deg,#fff,#f0f9ff);
+      padding:10px;
+      transition:all 0.3s ease;
+    }
+    summary{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      list-style:none;
+      outline:none;
+      padding:8px;
+      border-radius:8px;
+      transition:all 0.3s ease;
+    }
+    summary.active{
+      background:var(--highlight-bg);
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+    .group-title{font-weight:700;color:#4f46e5}
+    .group-meta{color:var(--muted);font-size:13px}
+
+    .skills{margin-top:12px}
+    .skill-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;transition:all 0.2s ease;}
+    .skill-row:hover{background:rgba(79,70,229,0.1)}
+
+    .skill-checkbox{width:18px;height:18px}
+    .skill-label{min-width:220px}
+
+    /* stars */
+    .stars{display:flex;gap:4px;align-items:center}
+    .star{
+      width:20px;height:20px;
+      border-radius:6px;
+      background:linear-gradient(180deg,#e4e7ef,#dfe6ff);
+      display:inline-flex;justify-content:center;align-items:center;
+      cursor:pointer;user-select:none;
+      font-size:12px;
+      font-weight:600;
+      color:#111;
+      transition:all 0.2s ease;
+    }
+    .star.selected{
+      background:linear-gradient(180deg,var(--accent),#4d031c);
+      color:#fff;
+    }
+    .star.disabled{opacity:0.35;cursor:not-allowed}
+
+    .expertise{min-width:120px;font-weight:600}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:12px}
+    button{
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      padding:10px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    button:hover{background:#6366f1}
+    button.secondary{background:#fff;border:1px solid #e6e9ef;color:#111}
+    button.secondary:hover{background:#f3f4f6}
+
+    .disabled-note{color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:800px){.skill-label{min-width:140px}.expertise{min-width:90px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>e-Service Register - AP Govt Employees — Skills Capture Screen</h1>
+        <p>Tick the skill if you have it, then rate yourself (1–10). Expertise will be shown automatically.</p>
+      </div>
+    </header>
+
+    <div id="accordion" class="card">
+      <!-- Groups injected by JS -->
+    </div>
+
+    <div class="card">
+      <div class="controls">
+        <button id="clearBtn" class="secondary">Clear Selections</button>
+        <div style="margin-left:auto;color:var(--muted);font-size:13px">Tip: uncheck a skill to disable rating for it</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const groups = [
+      { name: 'Administrative & Governance Skills', skills: ['Policy Formulation & Analysis','Government Procedures & Rules','File Management & Noting-Drafting','RTI Act Implementation','Establishment Rules & Procedures']},
+      { name: 'Digital & IT Skills', skills: ['Basic Computer Operations','MS Office (Word, Excel, PowerPoint)','E-Office Operations','CFMS (Comprehensive Finnacial Management System)','Programming (Python, Java, C++)','Data Analysis & Visualization','Cybersecurity Awareness','GIS Mapping Tools','AI & Machine Learning Fundamentals']},
+      { name: 'Finance, Accounting & Audit Skills', skills: ['Budget Preparation & Monitoring','Treasury & CFMS Operations','Public Financial Management','Audit & Compliance Procedures','Public Procurement(AP e-Procurement Portal)']},
+      { name: 'Technical & Engineering Skills', skills: ['Civil Engineering','Electrical Engineering','Mechanical Engineering','Irrigation & Water Resources','Urban Planning & Smart City Development','Renewable Energy Technologies','IoT & Smart Infrastructure']},
+      { name: 'Education & Training Skills', skills: ['Teaching & Curriculum Development','E-Learning Tools','Classroom Technology (Smart Boards, LMS)','Skill Development & Vocational Training','Research & Academic Writing']},
+      { name: 'Agriculture & Allied Sector Skills', skills: ['Crop Management','Soil Health & Fertilizer Management','Irrigation Techniques','Animal Husbandry / Dairy Techniques','Sericulture / Fisheries','Agri Marketing & Value Chain','Agricultural Extension Services']},
+      { name: 'Management & Leadership Skills', skills: ['Strategic Planning','Team Management & Motivation','Conflict Resolution','Change Management','Project Management','Public Speaking & Presentation']},
+      { name: 'Law & Enforcement Skills', skills: ['Law & Order Management','Investigation Techniques','Cyber Crime Tracking','Evidence Collection & Case Documentation','Traffic Management','Disaster & Emergency Response']},
+      { name: 'Social Welfare & Community Engagement Skills', skills: ['Community Mobilization','Welfare Scheme Implementation','Grievance Redressal Systems','Social Audit','Tribal / Rural Development Programs','Gender & Child Welfare Services','Latest Initiative of Govt like P4']},
+      { name: 'Communication & Soft Skills', skills: ['Official Communication (Telugu, English)','Report Writing','Documentation & Drafting','Negotiation Skills','Customer/ Citizen Service Skills','Interpersonal Relations','Presentation & Public Speaking']},
+      { name: 'Emerging & Future Skills', skills: ['Artificial Intelligence Use in Governance','Big Data & Predictive Analytics','Blockchain in Land/Records','Drones for Governance','Smart Governance Tools (IoT, Digital Twins)','Climate Change Adaptation & Sustainability','Green Energy & Carbon Management']}
+    ];
+
+    const expertiseMap = rating => {
+      if(rating<=0) return '';
+      if(rating<=2) return 'Novice';
+      if(rating<=4) return 'Beginner';
+      if(rating<=6) return 'Intermediate';
+      if(rating<=8) return 'Advanced';
+      return 'Expert';
+    }
+
+    const accordion = document.getElementById('accordion');
+
+    groups.forEach((g,gi)=>{
+      const details = document.createElement('details');
+      if(gi===0) details.open = true;
+      details.className='group-card';
+
+      const summary = document.createElement('summary');
+      summary.innerHTML = `<div style="display:flex;flex-direction:column"><span class="group-title">${g.name}</span><span class="group-meta">Selected 0 of ${g.skills.length} skills</span></div><div style="font-size:13px;color:#6b7280">Expand</div>`;
+      details.appendChild(summary);
+
+      const skillsWrap = document.createElement('div');
+      skillsWrap.className='skills';
+
+      g.skills.forEach((s,si)=>{
+        const row = document.createElement('div');
+        row.className='skill-row card';
+        row.style.display='flex';
+        row.style.justifyContent='space-between';
+        row.style.alignItems='center';
+
+        const left = document.createElement('div');
+        left.style.display='flex'; left.style.alignItems='center'; left.style.gap='12px';
+
+        const cb = document.createElement('input'); cb.type='checkbox'; cb.className='skill-checkbox'; cb.id=`g${gi}s${si}`;
+        const lbl = document.createElement('label'); lbl.htmlFor=cb.id; lbl.className='skill-label'; lbl.textContent=s;
+        left.appendChild(cb); left.appendChild(lbl);
+
+        const middle = document.createElement('div'); middle.className='stars';
+        middle.setAttribute('aria-hidden','true');
+        for(let k=1;k<=10;k++){
+          const st = document.createElement('div');
+          st.className='star disabled'; st.tabIndex=0; st.dataset.value=k; st.title=`${k}/10`; st.innerHTML=k;
+          middle.appendChild(st);
+        }
+
+        const exp = document.createElement('div'); exp.className='expertise'; exp.textContent=''; exp.style.color='#6b7280';
+
+        const toggleStarsEnabled = (enabled)=>{
+          middle.querySelectorAll('.star').forEach(st=>{
+            st.classList.toggle('disabled',!enabled);
+            if(!enabled) st.classList.remove('selected');
+          });
+          if(!enabled) exp.textContent='';
+        }
+
+        const updateSelectedCount = ()=>{
+          const allCheckboxes = details.querySelectorAll('.skill-row input[type="checkbox"]');
+          const selectedCount = Array.from(allCheckboxes).filter(cb=>cb.checked).length;
+          const totalCount = allCheckboxes.length;
+          const meta = details.querySelector('.group-meta');
+          if(meta) meta.textContent = `Selected ${selectedCount} of ${totalCount} skills`;
+        }
+
+        cb.addEventListener('change', ()=>{
+          toggleStarsEnabled(cb.checked);
+          updateSelectedCount();
+        });
+
+        middle.addEventListener('click', e=>{
+          const st = e.target.closest('.star'); if(!st||st.classList.contains('disabled')) return;
+          const val = Number(st.dataset.value);
+          middle.querySelectorAll('.star').forEach(sel=>{
+            sel.classList.toggle('selected',Number(sel.dataset.value)<=val);
+          });
+          exp.textContent=expertiseMap(val); exp.style.color='#111827';
+        });
+
+        middle.addEventListener('keydown', e=>{
+          const active = document.activeElement;
+          if(!active.classList.contains('star')||active.classList.contains('disabled')) return;
+          let cur=Number(active.dataset.value);
+          if(e.key==='ArrowLeft'||e.key==='ArrowDown') cur=Math.max(1,cur-1);
+          if(e.key==='ArrowRight'||e.key==='ArrowUp') cur=Math.min(10,cur+1);
+          if(e.key==='Enter'||e.key===' '){
+            middle.querySelectorAll('.star').forEach(s=>s.classList.toggle('selected',Number(s.dataset.value)<=cur));
+            exp.textContent=expertiseMap(cur); exp.style.color='#111827'; e.preventDefault();
+          }
+        });
+
+        row.appendChild(left);
+        const right=document.createElement('div'); right.style.display='flex'; right.style.alignItems='center'; right.style.gap='12px';
+        right.appendChild(middle); right.appendChild(exp);
+        row.appendChild(right);
+
+        skillsWrap.appendChild(row);
+      });
+
+      details.appendChild(skillsWrap);
+      accordion.appendChild(details);
+    });
+
+    document.getElementById('clearBtn').addEventListener('click',()=>{
+      accordion.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
+      accordion.querySelectorAll('.star.selected').forEach(s=>s.classList.remove('selected'));
+      accordion.querySelectorAll('.star').forEach(s=>s.classList.add('disabled'));
+      accordion.querySelectorAll('.group-meta').forEach(m=>m.textContent=m.textContent.replace(/\d+/,'0'));
+    });
+
+    accordion.querySelectorAll('.star').forEach(s=>s.classList.add('disabled'));
+
+    const detailsList = accordion.querySelectorAll('details');
+    detailsList.forEach(d=>{
+      d.addEventListener('toggle',()=>{
+        const label=d.querySelector('summary div:last-child');
+        if(label) label.textContent=d.open?'Collapse':'Expand';
+        detailsList.forEach(other=>{if(other!==d) other.open=false;});
+        detailsList.forEach(s=>{
+          const sum=s.querySelector('summary');
+          if(sum) sum.classList.toggle('active', s.open);
+        });
+      });
+      const lbl=d.querySelector('summary div:last-child'); if(lbl) lbl.textContent=d.open?'Collapse':'Expand';
+      const sum=d.querySelector('summary'); if(sum) sum.classList.toggle('active', d.open);
+    });
+  </script>
+</body>
+</html>
